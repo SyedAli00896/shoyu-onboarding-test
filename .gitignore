@@ -1,0 +1,17 @@
+# system files
+.idea
+.DS_Store
+Thumbs.db
+
+# compiled / dependencies
+node_modules
+.env
+dist
+.husky
+
+# logging file
+log-debug
+yarn-error.log
+
+# others
+src/defs/gql-types.ts

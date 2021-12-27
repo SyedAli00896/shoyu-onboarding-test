@@ -1,0 +1,7 @@
+schema: ./src/graphql/schema
+generates:
+  ./src/defs/gql-types.ts:
+    plugins:
+      - typescript
+    config:
+      skipTypename: true
