@@ -18,6 +18,39 @@ const toUser = (ctx: ApolloCtx, username: string, name: string, twitter: string)
 	}
 }
 
+const getUser = async (chainId: string, address: string): Promise<gqlTypes.User> => {
+	const userId = helper.toCompositeKey(chainId, address)
+	const user = await userRepository.findById(userId)
+	if (!user) {
+		throw userError.buildUserNotFound()
+	}
+	return {
+		id: user.id,
+		address: user.address,
+		chainId: user.chainId,
+		name: user.name,
+		twitter: user.twitter,
+		username: user.username,
+	}
+}
+
+const getCurrentUser = (
+	_: any,
+	args: any,
+	{ chainId, address }: ApolloCtx
+): Promise<gqlTypes.User> => {
+	return getUser(chainId, address)
+}
+
+const getOtherUser = (
+	_: any,
+	{ address }: gqlTypes.QueryUserArgs,
+	{ chainId }: ApolloCtx
+): Promise<gqlTypes.User> => {
+	joi.validateSchema(joi.buildAddressInputSchema(), address)
+	return getUser(chainId, address)
+}
+
 const signup = async (
 	_: any,
 	{ input }: gqlTypes.MutationSignUpArgs,
@@ -77,6 +110,10 @@ const updateMe = async (
 }
 
 export default {
+	Query: {
+		me: combineResolvers(helper.hasChainId, helper.isAuthenticated, getCurrentUser),
+		user: combineResolvers(helper.hasChainId, helper.isAuthenticated, getOtherUser),
+	},
 	Mutation: {
 		signUp: combineResolvers(helper.hasChainId, helper.isAuthenticated, signup),
 		updateMe: combineResolvers(helper.hasChainId, helper.isAuthenticated, updateMe),

@@ -21,6 +21,11 @@ export const dbConfig = {
   database: process.env.DB_DATABASE || 'app',
 }
 
+export const redisConfig = {
+  host: process.env.REDIS_HOST || 'localhost',
+  port: +process.env.REDIS_PORT || 6379,
+}
+
 export const blockchainConfig = {
   networks: helper.stringListToMap(lookupEnvKeyOrThrow('NETWORKS')),
   networksURI: helper.stringListToMap(lookupEnvKeyOrThrow('NETWORKS_URI'), '|', ';'),
